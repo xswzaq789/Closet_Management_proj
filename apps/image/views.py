@@ -34,6 +34,8 @@ class UploadImage(CreateView):
                                    path=path_weightfile, source='local'  )
 
 
+
+
             # 이미지 라벨 갯수 옵션 ( 보통 2개로 세팅 (상의,하의 ) , 사진이 1인 전신샷이라고 가정)
             model.max_det = 2
 
@@ -43,11 +45,15 @@ class UploadImage(CreateView):
 
             results = model(img, size=640)
 
-            crops = results.crop(save=True)  # cropped detections dictionary
-            test01 = crops[0]
-            test02 = crops[1]
 
+            # 크롭파일 이미지화 진행중
+            crops = results.crop(save=True)  # cropped detections dictionary
+            test01 = crops[0]['im']
+            test02 = crops[1]['im']
             # 반환시 좌표로 넘파이 어레이로 반환 다시 이미지파일 변환 과정 필요
+
+
+
 
 
             # 추가 옷 종류만 json 파일로 표시 가능
@@ -59,9 +65,9 @@ class UploadImage(CreateView):
             results.render()
             for img in results.imgs:
                 img_base64 = im.fromarray(img)
-                img_base64.save("media/yolo_out/image0.jpg", format="JPEG")
+                img_base64.save("media/yolo_out/result.jpg", format="JPEG")
 
-            inference_img = "/media/yolo_out/image0.jpg"
+            inference_img = "/media/yolo_out/result.jpg"
 
 
             form = ImageUploadForm()
