@@ -8,6 +8,12 @@ from django.views.generic.edit import CreateView
 from .models import ImageModel
 from .forms import ImageUploadForm
 
+
+# 스토리지 이미지 이름을 이용해서 접근 후 결과값 반환 코드 작성필요
+
+
+
+
 class UploadImage(CreateView):
     model = ImageModel
     template_name = 'image/imagemodel_form.html'
@@ -46,9 +52,12 @@ class UploadImage(CreateView):
 
 
             # 크롭파일 이미지화 진행중
+            # 이미지가 한개일때 에러 발생 , 해결해야됨
             crops = results.crop(save=True)  # cropped detections dictionary
             test01 = crops[0]
             test02 = crops[1]
+
+
             # 반환시 좌표로 넘파이 어레이로 반환 다시 이미지파일 변환 과정 필요
 
 
@@ -76,8 +85,6 @@ class UploadImage(CreateView):
                 'cloths_type' : cloths_type,
                 'test01' : test01 ,
                 'test02' : test02
-
-
 
             }
             return render(request, 'image/imagemodel_form.html', context)
