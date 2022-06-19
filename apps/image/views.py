@@ -29,12 +29,12 @@ class UploadImage(CreateView):
         #     img_instance.save() # 넘파이나 바이너리로 저장하는 기능
         form = ImageUploadForm(request.POST, request.FILES)
         if form.is_valid():  # is_valid() 메서드 데이터의 유효성 검사하는 역할
-            url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png"
-            path = "c:/Users/crid2/django_yolo_web/media/images/" + "test3.png"
+            url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test1.png"
+            path = "c:/Users/crid2/django_yolo_web/media/images/" + "test2.png"
             urllib.request.urlretrieve(url, path)
             # urllib.request.urlretrieve("https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png",
             #                           "test2.jpg")
-            img = 'c:/Users/crid2/django_yolo_web/media/images/test3.png'
+            img = 'c:/Users/crid2/django_yolo_web/media/images/test2.png'
             # url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png"
             # img = urllib.request.urlopen(url)
             # img = render(request, 'https:\\closetimg103341-dev.s3.us-west-2.amazonaws.com\\test2.png')
@@ -69,9 +69,11 @@ class UploadImage(CreateView):
 
             # 크롭파일 이미지화 진행중
             # 이미지가 한개일때 에러 발생 , 해결해야됨
-            crops = results.crop(save=True)  # cropped detections dictionary
-            test01 = crops[0]
-            test02 = crops[1]
+            crops = results.crop(save=False)  # cropped detections dictionary
+
+            test01 = crops[0]['im'] # 라벨
+            test01_1 = crops[0]['label']
+            # test02 = crops[1]
 
 
             # 반환시 좌표로 넘파이 어레이로 반환 다시 이미지파일 변환 과정 필요
@@ -100,7 +102,7 @@ class UploadImage(CreateView):
                 "inference_img": inference_img,
                 'cloths_type' : cloths_type,
                 'test01' : test01 ,
-                'test02' : test02
+                 'test02' : test01_1
 
             }
             return render(request, 'image/imagemodel_form.html', context)
