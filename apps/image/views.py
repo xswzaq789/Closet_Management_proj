@@ -30,13 +30,13 @@ class UploadImage(CreateView):
         form = ImageUploadForm(request.POST, request.FILES)
         if form.is_valid():  # is_valid() 메서드 데이터의 유효성 검사하는 역할
             global url , image_name
-            url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test1.png"
+            url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png"
             image_name = url.split('/')[-1]
-            path = "c:/Users/crid2/django_yolo_web/media/images/" + "test1.png"
+            path = "c:/Users/crid2/django_yolo_web/media/images/" + image_name
             urllib.request.urlretrieve(url, path)
             # urllib.request.urlretrieve("https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png",
             #                           "test2.jpg")
-            img = 'c:/Users/crid2/django_yolo_web/media/images/test1.png'
+            img = 'c:/Users/crid2/django_yolo_web/media/images/' + image_name
             # url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png"
             # img = urllib.request.urlopen(url)
             # img = render(request, 'https:\\closetimg103341-dev.s3.us-west-2.amazonaws.com\\test2.png')
