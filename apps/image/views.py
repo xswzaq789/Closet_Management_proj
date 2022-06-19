@@ -29,12 +29,14 @@ class UploadImage(CreateView):
         #     img_instance.save() # 넘파이나 바이너리로 저장하는 기능
         form = ImageUploadForm(request.POST, request.FILES)
         if form.is_valid():  # is_valid() 메서드 데이터의 유효성 검사하는 역할
+            global url , image_name
             url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test1.png"
-            path = "c:/Users/crid2/django_yolo_web/media/images/" + "test2.png"
+            image_name = url.split('/')[-1]
+            path = "c:/Users/crid2/django_yolo_web/media/images/" + "test1.png"
             urllib.request.urlretrieve(url, path)
             # urllib.request.urlretrieve("https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png",
             #                           "test2.jpg")
-            img = 'c:/Users/crid2/django_yolo_web/media/images/test2.png'
+            img = 'c:/Users/crid2/django_yolo_web/media/images/test1.png'
             # url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png"
             # img = urllib.request.urlopen(url)
             # img = render(request, 'https:\\closetimg103341-dev.s3.us-west-2.amazonaws.com\\test2.png')
@@ -92,8 +94,8 @@ class UploadImage(CreateView):
             for img in results.imgs:
                 img_base64 = im.fromarray(img)
                 # 결과 저장 및 폴더지정
-                img_base64.save("media/yolo_out/result.jpg", format="JPEG")
-            inference_img = "/media/yolo_out/result.jpg"
+                img_base64.save("media/yolo_out/" + image_name, format="JPEG")
+            inference_img = "/media/yolo_out/" + image_name
 
 
             form = ImageUploadForm()
