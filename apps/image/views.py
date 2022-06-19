@@ -38,6 +38,7 @@ class UploadImage(CreateView):
 
             url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/" + image_name_input
             image_name = url.split('/')[-1]
+
             path = "c:/Users/crid2/django_yolo_web/media/images/" + image_name
             urllib.request.urlretrieve(url, path)
             # urllib.request.urlretrieve("https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png",
@@ -59,7 +60,8 @@ class UploadImage(CreateView):
             path_hubconfig = "c:/Users/crid2/django_yolo_web/yolov5_code" # yolov5 폴더 루트
             path_weightfile = "c:/Users/crid2/django_yolo_web/yolov5_code/train_file/yolov5s.pt" # yolov5 가중치로 학습한 pt파일위치
             model = torch.hub.load(path_hubconfig, 'custom',
-                                   path=path_weightfile, source='local'  )
+                                   path=path_weightfile, source='local'
+                                   )
 
 
             # 이미지 라벨 갯수 옵션 ( 보통 2개로 세팅 (상의,하의 ) , 사진이 1인 전신샷이라고 가정)
@@ -77,7 +79,7 @@ class UploadImage(CreateView):
 
             # 크롭파일 이미지화 진행중
             # 이미지가 한개일때 에러 발생 , 해결해야됨
-            crops = results.crop(save=False)  # cropped detections dictionary
+            crops = results.crop(save=True)  # cropped detections dictionary
 
             test01 = crops[0]['im'] # 라벨
             test01_1 = crops[0]['label']
