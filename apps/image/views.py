@@ -28,9 +28,15 @@ class UploadImage(CreateView):
         #     )
         #     img_instance.save() # 넘파이나 바이너리로 저장하는 기능
         form = ImageUploadForm(request.POST, request.FILES)
+
         if form.is_valid():  # is_valid() 메서드 데이터의 유효성 검사하는 역할
-            global url , image_name
-            url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png"
+            # 지역함수를 전역함수로 선언
+            global url, image_name , image_name_input
+
+            # url 뒷부분을 수동으로 입력해서 매번 url을 바꿔야하는 점을 일단 변경..추후 자동으로 설정요망
+            image_name_input = input(str('url 뒷부분 이미지명과 확장자를 입력 ex)test1.png : '))
+
+            url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/" + image_name_input
             image_name = url.split('/')[-1]
             path = "c:/Users/crid2/django_yolo_web/media/images/" + image_name
             urllib.request.urlretrieve(url, path)
@@ -78,6 +84,7 @@ class UploadImage(CreateView):
             # test02 = crops[1]
 
 
+
             # 반환시 좌표로 넘파이 어레이로 반환 다시 이미지파일 변환 과정 필요
 
 
@@ -104,7 +111,7 @@ class UploadImage(CreateView):
                 "inference_img": inference_img,
                 'cloths_type' : cloths_type,
                 'test01' : test01 ,
-                 'test02' : test01_1
+                'test02' : test01_1
 
             }
             return render(request, 'image/imagemodel_form.html', context)
