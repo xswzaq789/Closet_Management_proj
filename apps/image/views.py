@@ -8,7 +8,7 @@ from django.views.generic.edit import CreateView
 from .models import ImageModel
 from .forms import ImageUploadForm
 
-
+import urllib.request
 # 스토리지 이미지 이름을 이용해서 접근 후 결과값 반환 코드 작성필요
 
 
@@ -20,13 +20,29 @@ class UploadImage(CreateView):
     fields = ["image"]
 
     def post(self, request, *args, **kwargs):
+        # form = ImageUploadForm(request.POST, request.FILES)
+        # if form.is_valid(): # is_valid() 메서드 데이터의 유효성 검사하는 역활
+        #     img = request.FILES.get('image')
+        #     img_instance = ImageModel(
+        #         image=img
+        #     )
+        #     img_instance.save() # 넘파이나 바이너리로 저장하는 기능
         form = ImageUploadForm(request.POST, request.FILES)
-        if form.is_valid(): # is_valid() 메서드 데이터의 유효성 검사하는 역활
-            img = request.FILES.get('image')
+        if form.is_valid():  # is_valid() 메서드 데이터의 유효성 검사하는 역할
+            url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png"
+            path = "c:/Users/crid2/django_yolo_web/media/images/" + "test3.png"
+            urllib.request.urlretrieve(url, path)
+            # urllib.request.urlretrieve("https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png",
+            #                           "test2.jpg")
+            img = 'c:/Users/crid2/django_yolo_web/media/images/test3.png'
+            # url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png"
+            # img = urllib.request.urlopen(url)
+            # img = render(request, 'https:\\closetimg103341-dev.s3.us-west-2.amazonaws.com\\test2.png')
+            # img = request.get('https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png')
             img_instance = ImageModel(
                 image=img
             )
-            img_instance.save() # 넘파이나 바이너리로 저장하는 기능
+            img_instance.save()  # 넘파이나 바이너리로 저장하는 기능
 
             uploaded_img_qs = ImageModel.objects.filter().last()
             img_bytes = uploaded_img_qs.image.read()
