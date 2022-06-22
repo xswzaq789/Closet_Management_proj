@@ -11,6 +11,27 @@ from .forms import ImageUploadForm
 import urllib.request
 # 스토리지 이미지 이름을 이용해서 접근 후 결과값 반환 코드 작성필요
 
+#컬러함수 필요 라이브러리
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.models import load_model
+import numpy as np
+
+model = load_model('C:/Users/crid2/Downloads/color.h5')
+
+# color 함수
+def color_classfication(numpy_value) :
+        crop_image = im.fromarray(numpy_value , mode=None)
+        crop_image.save('media/crop/crop0.jpg')
+        img_src = 'media/crop/crop0.jpg'
+        test_img = image.load_img(img_src, target_size=(200, 200))
+        x = image.img_to_array(test_img)
+        x = np.expand_dims(x, axis=0)
+        image_ = np.vstack([x])
+        classes = model.predict(image_, batch_size=10)
+        print('pred - ', classes[0])
+        print(np.argmax(classes[0]))
+        return
+
 
 
 
@@ -79,13 +100,13 @@ class UploadImage(CreateView):
 
             # 크롭파일 이미지화 진행중
             # 이미지가 한개일때 에러 발생 , 해결해야됨
-            crops = results.crop(save=True)  # cropped detections dictionary
+            crops = results.crop(save=False)  # cropped detections dictionary
 
-            test01 = crops[0]['im'] # 라벨
-            test01_1 = crops[0]['label']
-            # test02 = crops[1]
+            test01 = crops[0]['label'] ,# 넘파이
+            test02 = crops[1]['label'] ,
 
-
+            color01 = color_classfication(crops[0]['im']) ,
+            color02 = color_classfication(crops[1]['im'])
 
             # 반환시 좌표로 넘파이 어레이로 반환 다시 이미지파일 변환 과정 필요
 
@@ -113,7 +134,7 @@ class UploadImage(CreateView):
                 "inference_img": inference_img,
                 'cloths_type' : cloths_type,
                 'test01' : test01 ,
-                'test02' : test01_1
+                'test02' : test02
 
             }
             return render(request, 'image/imagemodel_form.html', context)
