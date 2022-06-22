@@ -19,7 +19,10 @@ import numpy as np
 model = load_model('C:/Users/crid2/Downloads/color.h5')
 
 # color 함수
+#color = {'black': 0, 'blue': 1, 'green': 2, 'pattern': 3, 'red': 4, 'white': 5}
+# 0  :     1 : red?  2: green   3 : black or blue  ,       5 : pattern or white
 def color_classfication(numpy_value) :
+        global color_result
         crop_image = im.fromarray(numpy_value , mode=None)
         crop_image.save('media/crop/crop0.jpg')
         img_src = 'media/crop/crop0.jpg'
@@ -28,9 +31,11 @@ def color_classfication(numpy_value) :
         x = np.expand_dims(x, axis=0)
         image_ = np.vstack([x])
         classes = model.predict(image_, batch_size=10)
-        print('pred - ', classes[0])
-        print(np.argmax(classes[0]))
-        return
+        # print('pred - ', classes[0])
+        color_result = np.argmax(classes[0])
+
+
+
 
 
 
@@ -41,42 +46,42 @@ class UploadImage(CreateView):
     fields = ["image"]
 
     def post(self, request, *args, **kwargs):
-        # form = ImageUploadForm(request.POST, request.FILES)
-        # if form.is_valid(): # is_valid() 메서드 데이터의 유효성 검사하는 역활
-        #     img = request.FILES.get('image')
-        #     img_instance = ImageModel(
-        #         image=img
-        #     )
-        #     img_instance.save() # 넘파이나 바이너리로 저장하는 기능
         form = ImageUploadForm(request.POST, request.FILES)
-
-        if form.is_valid():  # is_valid() 메서드 데이터의 유효성 검사하는 역할
-            # 지역함수를 전역함수로 선언
-            global url, image_name , image_name_input
-
-            # url 뒷부분을 수동으로 입력해서 매번 url을 바꿔야하는 점을 일단 변경..추후 자동으로 설정요망
-            image_name_input = input(str('url 뒷부분 이미지명과 확장자를 입력 ex)test1.png : '))
-
-            url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/" + image_name_input
-            image_name = url.split('/')[-1]
-
-            path = "c:/Users/crid2/django_yolo_web/media/images/" + image_name
-            urllib.request.urlretrieve(url, path)
-            # urllib.request.urlretrieve("https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png",
-            #                           "test2.jpg")
-            img = 'c:/Users/crid2/django_yolo_web/media/images/' + image_name
-            # url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png"
-            # img = urllib.request.urlopen(url)
-            # img = render(request, 'https:\\closetimg103341-dev.s3.us-west-2.amazonaws.com\\test2.png')
-            # img = request.get('https://closetimg103341-dev.s3.us-west-2.amazonaws.com/test2.png')
+        if form.is_valid(): # is_valid() 메서드 데이터의 유효성 검사하는 역활
+            img = request.FILES.get('image')
             img_instance = ImageModel(
                 image=img
             )
-            img_instance.save()  # 넘파이나 바이너리로 저장하는 기능
-
+            img_instance.save() # 넘파이나 바이너리로 저장하는 기능
             uploaded_img_qs = ImageModel.objects.filter().last()
             img_bytes = uploaded_img_qs.image.read()
             img = im.open(io.BytesIO(img_bytes))
+
+        # form = ImageUploadForm(request.POST, request.FILES)
+        #
+        # if form.is_valid():  # is_valid() 메서드 데이터의 유효성 검사하는 역할
+        #     # 지역함수를 전역함수로 선언
+        #     global url, image_name , image_name_input
+        #
+        #     # url 뒷부분을 수동으로 입력해서 매번 url을 바꿔야하는 점을 일단 변경..추후 자동으로 설정요망
+        #     image_name_input = input(str('url 뒷부분 이미지명과 확장자를 입력 ex)test1.png : '))
+        #
+        #
+        #     url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/" + image_name_input
+        #     image_name = url.split('/')[-1]
+        #
+        #     path = "c:/Users/crid2/django_yolo_web/media/images/" + image_name
+        #     urllib.request.urlretrieve(url, path)
+        #     img = 'c:/Users/crid2/django_yolo_web/media/images/' + image_name
+        #
+        #     img_instance = ImageModel(
+        #         image=img
+        #     )
+        #     img_instance.save()  # 넘파이나 바이너리로 저장하는 기능
+        #
+        #     uploaded_img_qs = ImageModel.objects.filter().last()
+        #     img_bytes = uploaded_img_qs.image.read()
+        #     img = im.open(io.BytesIO(img_bytes))
 
             path_hubconfig = "c:/Users/crid2/django_yolo_web/yolov5_code" # yolov5 폴더 루트
             path_weightfile = "c:/Users/crid2/django_yolo_web/yolov5_code/train_file/yolov5s.pt" # yolov5 가중치로 학습한 pt파일위치
@@ -86,7 +91,7 @@ class UploadImage(CreateView):
 
 
             # 이미지 라벨 갯수 옵션 ( 보통 2개로 세팅 (상의,하의 ) , 사진이 1인 전신샷이라고 가정)
-            model.max_det = 2
+            model.max_det = 1
 
             # 라벨 지정 학률 (너무 낮은 확률이면 애매한 옷도 모두 지정해버림)
             model.conf = 0.6
@@ -102,11 +107,13 @@ class UploadImage(CreateView):
             # 이미지가 한개일때 에러 발생 , 해결해야됨
             crops = results.crop(save=False)  # cropped detections dictionary
 
-            test01 = crops[0]['label'] ,# 넘파이
-            test02 = crops[1]['label'] ,
-
+            test01 = crops[0]['label'] ,
+            print(test01)
+            # test02 = crops[1]['label'] ,
             color01 = color_classfication(crops[0]['im']) ,
-            color02 = color_classfication(crops[1]['im'])
+            print(color01)
+
+            # color02 = color_classfication(crops[1]['im']) ,
 
             # 반환시 좌표로 넘파이 어레이로 반환 다시 이미지파일 변환 과정 필요
 
@@ -124,8 +131,8 @@ class UploadImage(CreateView):
             for img in results.imgs:
                 img_base64 = im.fromarray(img)
                 # 결과 저장 및 폴더지정
-                img_base64.save("media/yolo_out/" + image_name, format="JPEG")
-            inference_img = "/media/yolo_out/" + image_name
+                img_base64.save("media/yolo_out/test1.png" , format="JPEG")
+            inference_img = "/media/yolo_out/test1.png"
 
 
             form = ImageUploadForm()
@@ -134,7 +141,9 @@ class UploadImage(CreateView):
                 "inference_img": inference_img,
                 'cloths_type' : cloths_type,
                 'test01' : test01 ,
-                'test02' : test02
+                # 'test02' : test02 ,
+                'color01' :  color_result ,
+                # 'color02' : color02
 
             }
             return render(request, 'image/imagemodel_form.html', context)
