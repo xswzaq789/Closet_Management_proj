@@ -107,7 +107,8 @@ class UploadImage(CreateView):
                 # [:,:,::-1] BGR -> RGB 값으로 전환 넘파이를 이미지 저장시 색상반전을 보정역활
                 color_classfication(crops[0]['im'][:, :, ::-1])
 
-                print('black: 0, blue: 1, green: 2, pattern: 3, red: 4, white: 5', test01)
+                print('black: 0, blue: 1, green: 2, pattern: 3, red: 4, white: 5')
+                print(test01)
                 print(crops[0]['im'].shape)
 
             except IndexError :

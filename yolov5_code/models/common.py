@@ -596,7 +596,7 @@ class Detections:
                         label = f'{self.names[int(cls)]} {conf:.2f}'
                         if crop:
                             file = save_dir / self.files[0] if save else None
-                            crops.append({'box': box, 'conf': conf, 'cls': cls, 'label': label,
+                            crops.append({'box': box, 'cls': cls, 'label': label,
                                           'im': save_one_box(box, im, file=file, save=save)})
                         else:  # all others
                             annotator.box_label(box, label, color=colors(cls))
