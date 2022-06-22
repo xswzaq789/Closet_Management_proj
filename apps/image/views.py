@@ -99,14 +99,23 @@ class UploadImage(CreateView):
 
             # 라운딩 박스 세팅수와 crops 이미지 갯수가 불일치 에러
             crops = results.crop(save=False)  # cropped detections dictionary , True 이미지 생성
-            test01 = crops[0]['label'],
+            # model.max_det = 1 개일때 객체가 0이면 'None'값을 반환
+            try :
+                crops[0]['label'] = True
+                test01 = crops[0]['label']
 
-            #4) 크롭된 이미지 색깔판별 함수 호출 color_classfiaction()
-            # [:,:,::-1] BGR -> RGB 값으로 전환 넘파이를 이미지 저장시 색상반전을 보정역활
-            color_classfication(crops[0]['im'][:, :, ::-1])
+                # 4) 크롭된 이미지 색깔판별 함수 호출 color_classfiaction()
+                # [:,:,::-1] BGR -> RGB 값으로 전환 넘파이를 이미지 저장시 색상반전을 보정역활
+                color_classfication(crops[0]['im'][:, :, ::-1])
 
-            print('black: 0, blue: 1, green: 2, pattern: 3, red: 4, white: 5' , test01)
-            print(crops[0]['im'].shape)
+                print('black: 0, blue: 1, green: 2, pattern: 3, red: 4, white: 5', test01)
+                print(crops[0]['im'].shape)
+
+            except IndexError :
+                test01 = 'None'
+
+
+
 
 
             # 추가 옷 종류만 json 파일로 표시 가능
@@ -129,7 +138,7 @@ class UploadImage(CreateView):
                 "inference_img": inference_img,
                 'cloths_type' : cloths_type,
                 'test01' : test01 ,
-                'color01' :  color_result ,
+                'color01' :  color_result
 
             }
             return render(request, 'image/imagemodel_form.html', context)
