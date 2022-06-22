@@ -101,7 +101,6 @@ class UploadImage(CreateView):
             crops = results.crop(save=False)  # cropped detections dictionary , True 이미지 생성
             # model.max_det = 1 개일때 객체가 0이면 'None'값을 반환
             try :
-                crops[0]['label'] = True
                 test01 = crops[0]['label']
 
                 # 4) 크롭된 이미지 색깔판별 함수 호출 color_classfiaction()
@@ -112,7 +111,7 @@ class UploadImage(CreateView):
                 print(crops[0]['im'].shape)
 
             except IndexError :
-                test01 = 'None'
+                test01 = 'No detect'
 
 
 
