@@ -39,6 +39,19 @@ def color_classfication(numpy_value) :
         print('color :' , np.argmax(classes[0]))
         print()
         color_result = int(np.argmax(classes[0]))
+        if color_result == 0 :
+            color_result = 'balck'
+        elif color_result == 1 :
+            color_result = 'blue'
+        elif color_result == 2 :
+            color_result = 'green'
+        elif color_result == 3 :
+            color_result = 'pattern'
+        elif color_result == 4 :
+            color_result = 'red'
+        else :
+            color_result = 'white'
+
 
 
 class UploadImage(CreateView):
@@ -76,14 +89,14 @@ class UploadImage(CreateView):
             crops = results.crop(save=False)  # cropped detections dictionary , True 이미지 생성
             # model.max_det = 1 개일때 객체가 0이면 'None'값을 반환
             try :
-                test01 = crops[0]['label']
+                cloths_label = crops[0]['label']
 
                 # 4) 크롭된 이미지 색깔판별 함수 호출 color_classfiaction()
                 # [:,:,::-1] BGR -> RGB 값으로 전환 넘파이를 이미지 저장시 색상반전을 보정역활
                 color_classfication(crops[0]['im'][:, :, ::-1])
 
                 print('black: 0, blue: 1, green: 2, pattern: 3, red: 4, white: 5')
-                print(test01)
+                print(cloths_label)
                 print(crops[0]['im'].shape)
 
             except IndexError :
@@ -110,7 +123,7 @@ class UploadImage(CreateView):
 
             # 딕셔너리를 json으로 변환
             import json
-            cloths_data = {'cloths_tpye' : cloths_type ,
+            cloths_data = {'cloths_label' : cloths_label ,
                             'color_code' : color_result}
 
             cloths_json = json.dumps(cloths_data)
@@ -123,7 +136,7 @@ class UploadImage(CreateView):
             context = {
                 "form": form,
                 "inference_img": inference_img,
-                'cloths_type' : cloths_type,
+                'cloths_label' : cloths_label,
                 'cloths_json' : cloths_json
 
             }
