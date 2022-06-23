@@ -130,6 +130,7 @@ class UploadImage(CreateView):
                 "form": form,
                 "inference_img": inference_img,
                 'cloths_label' : cloths_label,
+                'cloths_color' : color_result ,
                 'cloths_json' : cloths_json
 
             }
