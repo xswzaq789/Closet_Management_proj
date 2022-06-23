@@ -67,7 +67,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'recommend',
     'rest_framework',
-
+    'knox',
     #### Project Apps ####
     'image',
 

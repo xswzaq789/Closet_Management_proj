@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("image.urls", namespace="image")),
     path('recommend/', include('recommend.urls')),
+    #path('api', include("image.urls"))
 ]
 
 if settings.DEBUG:

@@ -12,7 +12,6 @@ from config.models import CreationModificationDateBase
 
 class ImageModel(CreationModificationDateBase):
     image = models.ImageField(_("image"), upload_to='images')
-    url = models.CharField()
     class Meta:
         verbose_name = "Image"
         verbose_name_plural = "Images"
