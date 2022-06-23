@@ -9,7 +9,7 @@ from .models import ImageModel
 from .forms import ImageUploadForm
 
 import urllib.request
-
+import json
 
 #  0) 절대경로 path 설정
 abs_path = 'C:/Users/crid2/django_yolo_web/'
@@ -38,7 +38,7 @@ def color_classfication(numpy_value) :
         print('pred - ', classes[0])
         print('color :' , np.argmax(classes[0]))
         print()
-        color_result = np.argmax(classes[0])
+        color_result = int(np.argmax(classes[0]))
 
 
 class UploadImage(CreateView):
@@ -58,31 +58,6 @@ class UploadImage(CreateView):
             img_bytes = uploaded_img_qs.image.read()
             img = im.open(io.BytesIO(img_bytes))
 
-        # form = ImageUploadForm(request.POST, request.FILES)
-        #
-        # if form.is_valid():  # is_valid() 메서드 데이터의 유효성 검사하는 역할
-        #     # 지역함수를 전역함수로 선언
-        #     global url, image_name , image_name_input
-        #
-        #     # url 뒷부분을 수동으로 입력해서 매번 url을 바꿔야하는 점을 일단 변경..추후 자동으로 설정요망
-        #     image_name_input = input(str('url 뒷부분 이미지명과 확장자를 입력 ex)test1.png : '))
-        #
-        #
-        #     url = "https://closetimg103341-dev.s3.us-west-2.amazonaws.com/" + image_name_input
-        #     image_name = url.split('/')[-1]
-        #
-        #     path = "c:/Users/crid2/django_yolo_web/media/images/" + image_name
-        #     urllib.request.urlretrieve(url, path)
-        #     img = 'c:/Users/crid2/django_yolo_web/media/images/' + image_name
-        #
-        #     img_instance = ImageModel(
-        #         image=img
-        #     )
-        #     img_instance.save()  # 넘파이나 바이너리로 저장하는 기능
-        #
-        #     uploaded_img_qs = ImageModel.objects.filter().last()
-        #     img_bytes = uploaded_img_qs.image.read()
-        #     img = im.open(io.BytesIO(img_bytes))
 
             path_hubconfig = abs_path + "yolov5_code" # yolov5 폴더 루트
             path_weightfile = abs_path + "yolov5_code/train_file/yolov5s.pt" # yolov5 가중치로 학습한 pt파일위치
@@ -112,6 +87,7 @@ class UploadImage(CreateView):
                 print(crops[0]['im'].shape)
 
             except IndexError :
+                print('NO detect , try again ')
                 test01 = 'No detect'
 
 
@@ -120,6 +96,7 @@ class UploadImage(CreateView):
 
             # 추가 옷 종류만 json 파일로 표시 가능
             cloths_type = results.pandas().xyxy[0]['name'].to_json(orient='records')
+            print(cloths_type)
             #test = results.pandas().xyxy[0] (라벨데이터 전체출력)
 
             # Results 업로드 이미지와 추론라벨 넘파이 결과값을 다시 이미지로 변환
@@ -131,14 +108,23 @@ class UploadImage(CreateView):
                 img_base64.save("media/yolo_out/result.png" , format="JPEG")
             inference_img = "/media/yolo_out/result.png"
 
+            # 딕셔너리를 json으로 변환
+            import json
+            cloths_data = {'cloths_tpye' : cloths_type ,
+                            'color_code' : color_result}
+
+            cloths_json = json.dumps(cloths_data)
+
+
+
+
 
             form = ImageUploadForm()
             context = {
                 "form": form,
                 "inference_img": inference_img,
                 'cloths_type' : cloths_type,
-                'test01' : test01 ,
-                'color01' :  color_result
+                'cloths_json' : cloths_json
 
             }
             return render(request, 'image/imagemodel_form.html', context)
