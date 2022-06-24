@@ -8,6 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.exceptions import FieldError
 
+# 장고 레스트 api 추가
 
 class UrlBase(models.Model):
     """
