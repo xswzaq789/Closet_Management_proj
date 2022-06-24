@@ -37,20 +37,26 @@ def color_classfication(numpy_value) :
         print()
         print('pred - ', classes[0])
         print('color :' , np.argmax(classes[0]))
+        print('beige: 0, black: 1, blue: 2,  gray: 3,   green: 4,  pattren: 5,  red: 6, white: 7')
         print()
         color_result = int(np.argmax(classes[0]))
         if color_result == 0 :
-            color_result = 'balck'
+            color_result = 'beige'
         elif color_result == 1 :
-            color_result = 'blue'
+            color_result = 'black'
         elif color_result == 2 :
-            color_result = 'green'
+            color_result = 'blue'
         elif color_result == 3 :
-            color_result = 'pattern'
+            color_result = 'gray'
         elif color_result == 4 :
+            color_result = 'green'
+        elif color_result == 5:
+            color_result = 'pattren'
+        elif color_result == 6:
             color_result = 'red'
         else :
             color_result = 'white'
+
 
 
 
@@ -95,7 +101,6 @@ class UploadImage(CreateView):
                 # [:,:,::-1] BGR -> RGB 값으로 전환 넘파이를 이미지 저장시 색상반전을 보정역활
                 color_classfication(crops[0]['im'][:, :, ::-1])
 
-                print('black: 0, blue: 1, green: 2, pattern: 3, red: 4, white: 5')
                 print(cloths_label)
                 print(crops[0]['im'].shape)
 
@@ -120,6 +125,12 @@ class UploadImage(CreateView):
 
             # 모델의 라벨과 컬러를 담은 json 파일은 cloths_json으로 저장됨
             cloths_json = json.dumps(cloths_data)
+
+
+            # 데이터 저장
+            with open('media/result.txt' , 'a'  ) as f :
+                f.write(cloths_json)
+                f.write('\n')
 
 
 
